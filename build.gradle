@@ -1,0 +1,44 @@
+plugins {
+	id 'fabric-loom' version '1.9-SNAPSHOT'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+	archivesName = project.archives_base_name
+}
+
+repositories {
+	maven { url = 'https://repo.opencollab.dev/maven-releases/' }
+	maven { url = 'https://repo.opencollab.dev/maven-snapshots/' }
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	// Biblioteka protokołu - bot to osobne połączenie, niezależne od Twojego klienta
+	implementation "org.geysermc.mcprotocollib:protocol:${project.mcpl_version}"
+	include "org.geysermc.mcprotocollib:protocol:${project.mcpl_version}"
+	include "org.geysermc.mcprotocollib:network:${project.mcpl_version}"
+}
+
+processResources {
+	inputs.property "version", project.version
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 21
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
